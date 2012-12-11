@@ -722,14 +722,7 @@ var util = Kalendae.util = {
 	},
 
 	isArray: function (array) {
-		return !(
-			!array ||
-			(!array.length || array.length === 0) ||
-			typeof array !== 'object' ||
-			!array.constructor ||
-			array.nodeType ||
-			array.item
-		);
+		return Object.prototype.toString.call(array) == "[object Array]"
 	}
 };
 
