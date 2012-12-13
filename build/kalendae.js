@@ -87,7 +87,7 @@ var Kalendae = function (targetElement, options) {
   if (typeof opts.blackout === 'function') {
     self.blackout = opts.blackout;
   } else if (!!opts.blackout) {
-    var bdates = parseDates(opts.blackout, opts.parseSplitDelimiter);
+    var bdates = parseDates(opts.blackout, opts.parseSplitDelimiter, opts.format);
     self.blackout = function (input) {
       input = moment(input).yearDay();
       if (input < 1 || !self._sel) return false;
@@ -368,14 +368,20 @@ Kalendae.prototype = {
   },
 
   setSelected : function (input, draw) {
-    this._sel = parseDates(input, this.settings.parseSplitDelimiter, this.settings.format);
-    this._sel.sort(function (a,b) {return a.yearDay() - b.yearDay();});
+    var new_dates = parseDates(input, this.settings.parseSplitDelimiter, this.settings.format);
+    var old_dates = parseDates(this.getSelected(), this.settings.parseSplitDelimiter, this.settings.format);
+
+    var i = old_dates.length;
+    while(i--) { this.removeSelected(old_dates[i], draw) }
+
+    var i = new_dates.length;
+    while(i--) { this.addSelected(new_dates[i], draw) }
 
     if (draw !== false) this.draw();
   },
 
   addSelected : function (date, draw) {
-    date = moment(date).hours(12);
+    date = moment(date, this.settings.format).hours(12);
 
     if(this.settings.dayOutOfMonthClickable && this.settings.mode !== 'range'){ this.makeSelectedDateVisible(date); }
 
@@ -416,7 +422,7 @@ Kalendae.prototype = {
   },
 
   removeSelected : function (date, draw) {
-    date = moment(date).hours(12);
+    date = moment(date, this.settings.format).hours(12);
     var i = this._sel.length;
     while (i--) {
       if (this._sel[i].yearDay() === date.yearDay()) {
