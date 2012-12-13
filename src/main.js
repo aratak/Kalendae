@@ -78,7 +78,7 @@ var Kalendae = function (targetElement, options) {
   if (typeof opts.blackout === 'function') {
     self.blackout = opts.blackout;
   } else if (!!opts.blackout) {
-    var bdates = parseDates(opts.blackout, opts.parseSplitDelimiter);
+    var bdates = parseDates(opts.blackout, opts.parseSplitDelimiter, opts.format);
     self.blackout = function (input) {
       input = moment(input).yearDay();
       if (input < 1 || !self._sel) return false;
@@ -372,7 +372,7 @@ Kalendae.prototype = {
   },
 
   addSelected : function (date, draw) {
-    date = moment(date).hours(12);
+    date = moment(date, this.settings.format).hours(12);
 
     if(this.settings.dayOutOfMonthClickable && this.settings.mode !== 'range'){ this.makeSelectedDateVisible(date); }
 
@@ -413,7 +413,7 @@ Kalendae.prototype = {
   },
 
   removeSelected : function (date, draw) {
-    date = moment(date).hours(12);
+    date = moment(date, this.settings.format).hours(12);
     var i = this._sel.length;
     while (i--) {
       if (this._sel[i].yearDay() === date.yearDay()) {
